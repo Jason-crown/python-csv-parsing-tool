@@ -11,6 +11,8 @@ def parse_csv(file_path):
     Returns:
         list: A list of dictionaries representing the CSV rows.
     """
+    if not file_exists(file_path):
+        return []
     with open(file_path, 'r', newline='', encoding='utf-8') as file:
         reader = csv.DictReader(file)
         return list(reader)
@@ -47,6 +49,23 @@ def filter_invalid_characters(file_path):
     list_of_invalid_chars = ['"', "'", "\\", " ", "..", "~", ":", "*", "?", "<", ">", "|", ";"]
     return ''.join(c for c in file_path if c not in list_of_invalid_chars)
 
+def file_exists(file_path):
+    """
+    Checks if the specified file exists.
+
+    Args:
+        file_path (str): The path to the file.
+    
+    Returns:
+        bool: True if the file exists, False otherwise.
+    """
+    try:
+        with open(file_path, 'r'):
+            return True
+    except FileNotFoundError:
+        print(f"Error: The file '{file_path}' does not exist.")
+        return False
+    
 def main() -> int:
     """
     Main function to handle command-line arguments and parse the CSV file."""
