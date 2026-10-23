@@ -60,26 +60,94 @@ def file_exists(file_path):
         bool: True if the file exists, False otherwise.
     """
     try:
-        with open(file_path, 'r'):
+        with open(file_path, 'r', encoding='utf-8'):
             return True
     except FileNotFoundError:
         print(f"Error: The file '{file_path}' does not exist.")
         return False
     
+def print_usage():
+    """
+    Prints the usage instructions for the script.
+    """
+    print("Usage: python parser.py <csv_file.csv>")
+
+def print_file_content(file_path):
+    """
+    Prints the content of the specified CSV file.
+
+    Args:
+        file_path (str): The path to the CSV file.
+    """
+    data = parse_csv(file_path)
+    for row in data:
+        print(row)
+        
+def print_all_file_content(file_path):
+    """
+    Prints the content of the specified CSV file, including headers.
+
+    Args:
+        file_path (str): The path to the CSV file.
+    """
+    if not file_exists(file_path):
+        return
+    with open(file_path, 'r', newline='', encoding='utf-8') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            print(row)
+
+def print_file_content_with_headers(file_path):
+    """
+    Prints the content of the specified CSV file, including headers.
+
+    Args:
+        file_path (str): The path to the CSV file.
+    """
+    if not file_exists(file_path):
+        return
+    with open(file_path, 'r', newline='', encoding='utf-8') as file:
+        reader = csv.DictReader(file)
+        headers = reader.fieldnames
+        print("Headers:", headers)
+        for row in reader:
+            print(row)
+
+def print_all_files_content(file_paths):
+    """
+    Prints the content of multiple CSV files.
+
+    Args:
+        file_paths (list): A list of paths to CSV files.
+    """
+    for file_path in file_paths:
+        print(f"Content of {file_path}:")
+        print_file_content(file_path)
+
+def print_all_files_content_with_headers(file_paths):
+    """
+    Prints the content of multiple CSV files, including headers.
+
+    Args:
+        file_paths (list): A list of paths to CSV files.
+    """
+    for file_path in file_paths:
+        print(f"Content of {file_path}:")
+        print_file_content_with_headers(file_path)
 def main() -> int:
     """
     Main function to handle command-line arguments and parse the CSV file."""
     if len(sys.argv) != 2:
-        print("Usage: python parser.py <csv_file.csv>")
+        print_usage()
         return 1
     argv = sys.argv[1:]
-    argv = [arg.strip() for arg in argv]
-    amount_of_args = len(argv)
+    file_list = [arg.strip() for arg in argv]
+    amount_of_args = len(file_list)
     if amount_of_args != 1:
         print("Error: Please provide exactly one CSV file path.")
         return 1
 
-    file_path = sys.argv[1]
+    file_path = file_list[0]
     valid = validate_file_path(file_path)
     if not valid:
         return 1
@@ -92,8 +160,7 @@ def main() -> int:
         return 1
     
     data = parse_csv(file_path)
-    for row in data:
-        print(row)
+    print_file_content(file_path)
     return 0
 if __name__ == "__main__":
     sys.exit(main())
