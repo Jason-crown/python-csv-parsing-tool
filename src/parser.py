@@ -43,20 +43,14 @@ def main() -> int:
         return 1
 
     file_path = sys.argv[1]
+    valid = validate_file_path(file_path)
+    if not valid:
+        return 1
     file_path = file_path.strip()
     list_of_invalid_chars = ['"', "'", "\\", " ", "..", "~", ":", "*", "?", "<", ">", "|", ";"]
+    file_path = ''.join(c for c in file_path if c not in list_of_invalid_chars)
+    
 
-    file_path = file_path.replace('"', '').replace("'", "")
-    file_path = file_path.replace("\\", "/")  # Normalize path for cross-platform compatibility
-    file_path = file_path.replace(" ", "")  # Remove spaces from the path
-    file_path = file_path.replace("..", "")  # Prevent directory traversal
-    file_path = file_path.replace("~", "")  # Prevent home directory access
-    file_path = file_path.replace(":", "")  # Prevent drive access on Windows
-    file_path = file_path.replace("*", "")  # Prevent wildcard usage
-    file_path = file_path.replace("?", "")  # Prevent wildcard usage
-    file_path = file_path.replace("<", "").replace(">", "")  # Prevent redirection
-    file_path = file_path.replace("|", "")  # Prevent pipe usage
-    file_path = file_path.replace(";", "")  # Prevent command chaining
     allowed_extensions = ['.csv']
     if not any(file_path.endswith(ext) for ext in allowed_extensions):
         print("Error: Only CSV files are allowed.")
