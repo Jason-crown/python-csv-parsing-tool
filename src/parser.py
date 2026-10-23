@@ -35,11 +35,29 @@ def validate_file_path(file_path):
 
     return True
 
+def filter_invalid_characters(file_path):
+    """
+    Filters out invalid characters from the file path.
+
+    Args:
+        file_path (str): The file path to filter.
+
+    Returns:
+        str: The filtered file path."""
+    list_of_invalid_chars = ['"', "'", "\\", " ", "..", "~", ":", "*", "?", "<", ">", "|", ";"]
+    return ''.join(c for c in file_path if c not in list_of_invalid_chars)
+
 def main() -> int:
     """
     Main function to handle command-line arguments and parse the CSV file."""
     if len(sys.argv) != 2:
         print("Usage: python parser.py <csv_file.csv>")
+        return 1
+    argv = sys.argv[1:]
+    argv = [arg.strip() for arg in argv]
+    amount_of_args = len(argv)
+    if amount_of_args != 1:
+        print("Error: Please provide exactly one CSV file path.")
         return 1
 
     file_path = sys.argv[1]
@@ -47,9 +65,7 @@ def main() -> int:
     if not valid:
         return 1
     file_path = file_path.strip()
-    list_of_invalid_chars = ['"', "'", "\\", " ", "..", "~", ":", "*", "?", "<", ">", "|", ";"]
-    file_path = ''.join(c for c in file_path if c not in list_of_invalid_chars)
-    
+    file_path = filter_invalid_characters(file_path)
 
     allowed_extensions = ['.csv']
     if not any(file_path.endswith(ext) for ext in allowed_extensions):
